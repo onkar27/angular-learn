@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+
+    <script src="angular.min.js"></script>
+  </head>
+  <body>
+    <div ng-app="Calc" ng-controller="myCtrl" ng-init="total=0" class="container">
+      <center>
+          <span ng-model="id"></span>
+          Name : <input ng-model="name" type="text" name=""/><br>
+          Amount : <input ng-model="amt" type="text" name=""/><br>
+          Total Amount  = <span ng-bind="total"></span> <br>
+          <input type="button" ng-click="onButtonClick()" name="button" value="submit"/>
+          <input type="button" ng-click="onUpdate(id)" name="button" value="update"/>
+      </center>
+      <table id="tab" class="ui sortable table segment css-serial">
+        <thead>
+        <tr>
+          <th>Sr.No.</th>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="(key,value) in records">
+          <td>{{ value.id + 1 }}</td>
+          <td ng-click = "setForUpdate(key)">{{ value.name }}</td>
+          <td ng-click = "setForUpdate(key)">{{ value.amt }}</td>
+          <td><input type="button"  value="delete" ng-click="onButtonClickRemove(key)"/></td>
+        </tr>
+      </tbody>
+      </table>
+      <script type="text/javascript">
+        var app = angular.module('Calc', []);
+        app.controller('myCtrl', function($scope) {
+            $scope.records = {};
+            $scope.onButtonClick = function() {
+                $scope.total += parseInt($scope.amt);
+                let id = parseInt(Object.keys($scope.records).length)+1;
+                $scope.records[id] = {
+                  name : $scope.name,
+                  amt : $scope.amt
+                };
+            }
+
+            $scope.onButtonClickRemove = function(x) {
+                $scope.total -= $scope.records[x].amt;
+                delete $scope.records[x];
+            }
+
+            $scope.setForUpdate = function(x) {
+                $scope.id = x;
+                $scope.name = $scope.records[x].name;
+                $scope.amt = $scope.records[x].amt;
+            }
+
+            $scope.onUpdate = function (id) {
+                let old = $scope.records[id];
+                $scope.total -= parseInt(old.amt);
+                $scope.total += parseInt($scope.amt);
+                $scope.records[id] = {
+                    name : $scope.name,
+                    amt : $scope.amt
+                };
+            }
+        });
+      </script>
+    </div>
+  </body>
+</html>
